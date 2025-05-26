@@ -1,0 +1,32 @@
+{
+    "name": "flight-service",
+    "version": "1.0.0",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+      "test": "mocha tests/*.spec.js",
+      "start": "node src/index.js",
+      "lint": "eslint ."
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+      "cors": "^2.8.5",
+      "dotenv": "^16.5.0",
+      "express": "^5.1.0",
+      "pg": "^8.14.1"
+    },
+    "devDependencies": {
+      "@types/chai": "^5.2.1",
+      "@types/mocha": "^10.0.10",
+      "eslint": "^9.25.0",
+      "mocha": "11.5.0",
+      "chai": "5.2.0",
+      "chai-http": "5.1.2"
+    },
+    "mocha": {
+    "timeout": 5000
+    }
+  }
+  
