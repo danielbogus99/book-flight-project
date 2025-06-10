@@ -3,18 +3,119 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
+  overflow-x: hidden;
 }
 
+.sky-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  background: linear-gradient(to bottom, #4f8cff 0%, #a0d8ef 100%);
+  overflow: hidden;
+  animation: skyMove 60s linear infinite alternate;
+  /* Increased duration for smoother effect */
+}
+
+@keyframes skyMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 100vw 0; }
+}
+
+/* Animated clouds */
+.cloud {
+  position: absolute;
+  opacity: 0.7;
+  filter: blur(1px);
+  animation: cloudMove 60s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: none; /* Remove old background */
+}
+
+.cloud1 { width: 180px; height: 60px; top: 10vh; left: 5vw; animation-duration: 60s; }
+.cloud2 { width: 120px; height: 40px; top: 20vh; left: 40vw; animation-duration: 80s; }
+.cloud3 { width: 200px; height: 70px; top: 30vh; left: 70vw; animation-duration: 90s; }
+.cloud4 { width: 100px; height: 30px; top: 50vh; left: 20vw; animation-duration: 70s; }
+.cloud5 { width: 140px; height: 50px; top: 60vh; left: 60vw; animation-duration: 100s; }
+
+@keyframes cloudMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(60vw); }
+}
+
+.cloud-part {
+  position: absolute;
+  background: linear-gradient(90deg, #fff 70%, #e0eafc 100%);
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.cloud1 .cloud-part:nth-child(1) {
+  width: 80px; height: 60px; left: 20px; top: 10px;
+}
+.cloud1 .cloud-part:nth-child(2) {
+  width: 60px; height: 50px; left: 70px; top: 0px;
+}
+.cloud1 .cloud-part:nth-child(3) {
+  width: 50px; height: 40px; left: 110px; top: 20px;
+}
+
+.cloud2 .cloud-part:nth-child(1) {
+  width: 50px; height: 35px; left: 10px; top: 5px;
+}
+.cloud2 .cloud-part:nth-child(2) {
+  width: 40px; height: 30px; left: 40px; top: 0px;
+}
+.cloud2 .cloud-part:nth-child(3) {
+  width: 30px; height: 25px; left: 70px; top: 10px;
+}
+
+.cloud3 .cloud-part:nth-child(1) {
+  width: 90px; height: 60px; left: 30px; top: 15px;
+}
+.cloud3 .cloud-part:nth-child(2) {
+  width: 70px; height: 50px; left: 80px; top: 0px;
+}
+.cloud3 .cloud-part:nth-child(3) {
+  width: 60px; height: 40px; left: 140px; top: 20px;
+}
+
+.cloud4 .cloud-part:nth-child(1) {
+  width: 40px; height: 25px; left: 10px; top: 5px;
+}
+.cloud4 .cloud-part:nth-child(2) {
+  width: 30px; height: 20px; left: 30px; top: 0px;
+}
+.cloud4 .cloud-part:nth-child(3) {
+  width: 25px; height: 15px; left: 55px; top: 8px;
+}
+
+.cloud5 .cloud-part:nth-child(1) {
+  width: 60px; height: 40px; left: 15px; top: 8px;
+}
+.cloud5 .cloud-part:nth-child(2) {
+  width: 45px; height: 30px; left: 50px; top: 0px;
+}
+.cloud5 .cloud-part:nth-child(3) {
+  width: 35px; height: 25px; left: 85px; top: 12px;
+}
+
+/* Main content styles */
 .app-container {
   min-height: 100vh;
   min-width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Add this line to center vertically */
+  justify-content: center;
   padding: 0;
-  background: radial-gradient(ellipse at 60% 10%, #23283a 60%, transparent 100%),
-              radial-gradient(ellipse at 20% 80%, #23283a 40%, transparent 100%);
+  position: relative;
+  z-index: 1;
+  background: none;
 }
 
 .main-title {
@@ -87,8 +188,8 @@ body {
 }
 
 .flights-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 28px;
   justify-content: center;
   margin-top: 32px;
@@ -103,7 +204,8 @@ body {
   box-shadow: 0 4px 32px #4f8cff18;
   padding: 28px 36px;
   min-width: 260px;
-  max-width: 340px;
+  max-width: 480px; /* Increased max width */
+  width: fit-content; /* Allow card to grow */
   transition: transform 0.25s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.2s;
   cursor: pointer;
   display: flex;
@@ -122,6 +224,8 @@ body {
 
 .flight-header {
   display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 12px;
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
@@ -134,6 +238,10 @@ body {
   font-size: 1.18rem;
   font-weight: 700;
   letter-spacing: 1px;
+  flex: 1 1 60%; /* Allow to grow and shrink */
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .flight-price {
@@ -144,6 +252,8 @@ body {
   font-size: 1.05rem;
   font-weight: 600;
   box-shadow: 0 2px 8px #4f8cff22;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .flight-details {
@@ -166,4 +276,224 @@ body {
   background: radial-gradient(circle, #4f8cff33 0%, transparent 80%);
   z-index: 0;
   pointer-events: none;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 32px;
+  background: rgba(35, 40, 58, 0.92);
+  padding: 18px 28px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #4f8cff22;
+  align-items: center;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.filter-bar input {
+  background: #23283a;
+  color: #e0eafc;
+  border: 1.5px solid #4f8cff44;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 6px #4f8cff11;
+}
+
+.filter-bar input:focus {
+  border: 1.5px solid #4f8cff;
+  box-shadow: 0 2px 12px #4f8cff33;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 36, 0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+
+.reservation-modal {
+  background: #23283a;
+  color: #e0eafc;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px #0008;
+  padding: 32px 36px 24px 36px;
+  min-width: 340px;
+  max-width: 96vw;
+  width: 400px;
+  position: relative;
+  animation: fadeInDown 0.4s;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: 90vh;         /* Add this */
+  overflow-y: auto;         /* Add this */
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #e0eafc;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+.modal-close:hover {
+  color: #ff6b6b;
+}
+
+.modal-flight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+.reservation-modal label {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.reservation-modal select {
+  margin-left: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #4f8cff44;
+  background: #181c24;
+  color: #e0eafc;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.modal-passenger-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-passenger {
+  background: #1a1e29;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 8px #4f8cff11;
+}
+
+.modal-passenger h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.02rem;
+  color: #4f8cff;
+}
+
+.modal-passenger input {
+  background: #23283a;
+  color: #e0eafc;
+  border: 1.5px solid #4f8cff44;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 2px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.modal-passenger input:focus {
+  border: 1.5px solid #4f8cff;
+  box-shadow: 0 2px 12px #4f8cff33;
+}
+
+.modal-total {
+  margin-top: 10px;
+  font-size: 1.15rem;
+  text-align: right;
+  color: #e0eafc;
+}
+
+.order-btn {
+  margin-top: 18px;
+  padding: 12px 0;
+  width: 100%;
+  background: linear-gradient(90deg, #4f8cff 60%, #6ec3ff 100%);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #4f8cff33;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.order-btn:hover {
+  background: linear-gradient(90deg, #6ec3ff 0%, #4f8cff 100%);
+  box-shadow: 0 4px 24px #4f8cff55;
+  transform: translateY(-2px) scale(1.02);
+}
+.order-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.order-spinner {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 3px solid #e0eafc;
+  border-top: 3px solid #4f8cff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+.flight-number-badge {
+  display: block;
+  align-self: flex-start;
+  margin: 2px 0 0 0;
+  padding: 0 0 0 0;
+  background: none;
+  color: #b6c6e6;
+  font-weight: 500;
+  font-size: 0.97rem;
+  border-radius: 0;
+  box-shadow: none;
+  letter-spacing: 0.5px;
+  animation: none;
+  position: static;
+  z-index: 1;
+}
+
+.modal-flight-number {
+  color: #4f8cff;
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .flights-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .flights-list {
+    grid-template-columns: 1fr;
+  }
 }
