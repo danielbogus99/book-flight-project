@@ -20,8 +20,8 @@
     "devDependencies": {
       "@types/chai": "^5.2.1",
       "@types/mocha": "^10.0.10",
-      "eslint": "^9.25.0",
-      "mocha": "11.5.0",
+      "eslint": "9.28.0",
+      "mocha": "11.6.0",
       "chai": "5.2.0",
       "chai-http": "5.1.2"
     },

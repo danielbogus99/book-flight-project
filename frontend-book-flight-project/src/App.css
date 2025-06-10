@@ -1,44 +1,169 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  background: #181c24;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.app-container {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Add this line to center vertically */
+  padding: 0;
+  background: radial-gradient(ellipse at 60% 10%, #23283a 60%, transparent 100%),
+              radial-gradient(ellipse at 20% 80%, #23283a 40%, transparent 100%);
+}
+
+.main-title {
+  font-size: 2.7rem;
+  font-weight: 700;
+  color: #e0eafc;
+  letter-spacing: 2px;
+  margin-bottom: 36px;
+  margin-top: 0;
+  animation: fadeInDown 1s;
+  text-shadow: 0 4px 24px #4f8cff22;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
+  animation: fadeIn 1.2s;
+}
+
+.cool-loader {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 6px solid #23283a;
+  border-top: 6px solid #4f8cff;
+  border-right: 6px solid #a0bfff;
+  animation: spin 1s cubic-bezier(.68,-0.55,.27,1.55) infinite;
+  box-shadow: 0 0 32px #4f8cff44;
+  margin-bottom: 18px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-40px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeIn {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 1.2rem;
+  margin-top: 40px;
+  animation: fadeInDown 0.7s;
+  background: rgba(30,34,48,0.85);
+  border-radius: 16px;
+  padding: 18px 32px;
+  box-shadow: 0 2px 16px #ff6b6b22;
+}
+
+.no-flights-message {
+  margin-top: 48px;
+  font-size: 1.3rem;
+  color: #4f8cff;
   text-align: center;
+  animation: fadeInDown 0.7s;
+  background: rgba(30,34,48,0.85);
+  border-radius: 16px;
+  padding: 18px 32px;
+  box-shadow: 0 2px 16px #4f8cff22;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.flights-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  margin-top: 32px;
+  width: 100%;
+  max-width: 1000px;
+  animation: fadeIn 1.2s;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.flight-card {
+  background: rgba(35, 40, 58, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 4px 32px #4f8cff18;
+  padding: 28px 36px;
+  min-width: 260px;
+  max-width: 340px;
+  transition: transform 0.25s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.flight-card:hover {
+  transform: translateY(-10px) scale(1.035) rotate(-1deg);
+  box-shadow: 0 8px 40px #4f8cff44;
+  border: 2px solid #4f8cff;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.flight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #e0eafc;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.flight-route {
+  color: #4f8cff;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
-.card {
-  padding: 2em;
+.flight-price {
+  color: #e0eafc;
+  background: #1a1e29;
+  border-radius: 8px;
+  padding: 4px 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px #4f8cff22;
 }
 
-.read-the-docs {
-  color: #888;
+.flight-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #b6c6e6;
+  font-size: 1.01rem;
+  margin-top: 8px;
+  animation: fadeIn 1.2s;
+}
+
+.flight-card::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, #4f8cff33 0%, transparent 80%);
+  z-index: 0;
+  pointer-events: none;
 }

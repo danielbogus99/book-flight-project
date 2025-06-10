@@ -1,34 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [flights, setFlights] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchFlights = async () => {
+      setLoading(true)
+      try {
+        const response = await axios.get(import.meta.env.VITE_URL + '/flights')
+        setFlights(response.data)
+        setError(null)
+      } catch (err) {
+        setError('Error fetching flights')
+      }
+      setLoading(false)
+    }
+    fetchFlights()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="app-container">
+      <h1 className="main-title">✈️ Book Flight</h1>
+      {loading ? (
+        <div className="loader-container">
+          <div className="loader"></div>
+          <span>Loading flights...</span>
+        </div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : flights.length === 0 ? (
+        <div className="no-flights-message">
+          No flights available at the moment.
+        </div>
+      ) : (
+        <div className="flights-list">
+          {flights.map((flight, idx) => (
+            <div className="flight-card" key={flight.id || idx}>
+              <div className="flight-header">
+                <span className="flight-route">{flight.origin} → {flight.destination}</span>
+                <span className="flight-price">${flight.price}</span>
+              </div>
+              <div className="flight-details">
+                <span>Departure: {flight.departureTime}</span>
+                <span>Arrival: {flight.arrivalTime}</span>
+                <span>Airline: {flight.airline}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
