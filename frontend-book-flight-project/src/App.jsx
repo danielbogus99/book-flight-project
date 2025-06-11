@@ -12,6 +12,12 @@ function App() {
   const [priceFilter, setPriceFilter] = useState('')
   const [dateFilter, setDateFilter] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
+  const [myFlightsOpen, setMyFlightsOpen] = useState(false);
+const [flightNumberQuery, setFlightNumberQuery] = useState('');
+const [passportQuery, setPassportQuery] = useState('');
+const [myFlightResult, setMyFlightResult] = useState(null);
+const [myFlightError, setMyFlightError] = useState('');
+
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [numSeats, setNumSeats] = useState(1)
   const [passengers, setPassengers] = useState([
@@ -19,7 +25,9 @@ function App() {
   ])
   const [orderLoading, setOrderLoading] = useState(false)
 
-  const filteredFlights = flights.filter(flight => {
+ const filteredFlights = flights
+  .filter(flight => !!flight.departureTime)
+  .filter(flight => {
     const matchesDeparture = flight.origin.toLowerCase().includes(departureFilter.toLowerCase());
     const matchesDestination = flight.destination.toLowerCase().includes(destinationFilter.toLowerCase());
     const matchesAirline = flight.airline.toLowerCase().includes(airlineFilter.toLowerCase());
@@ -67,17 +75,25 @@ function App() {
     setPassengers([{ fullName: '', passport: '', email: '' }])
   }
 
-  // Handle seat number change
-  const handleNumSeatsChange = (e) => {
-    const value = Math.max(1, Math.min(5, Number(e.target.value)))
-    setNumSeats(value)
-    setPassengers((prev) => {
-      const arr = [...prev]
-      while (arr.length < value) arr.push({ fullName: '', passport: '', email: '' })
-      while (arr.length > value) arr.pop()
-      return arr
-    })
+ const handleNumSeatsChange = (e) => {
+  const value = Math.max(1, Math.min(5, Number(e.target.value)));
+  const maxSeats = selectedFlight?.available_seats
+ || 1;
+
+  if (value > maxSeats) {
+    alert(`❌ Not enough seats. Only ${maxSeats} left.`);
+    return;
   }
+
+  setNumSeats(value);
+  setPassengers((prev) => {
+    const arr = [...prev];
+    while (arr.length < value) arr.push({ fullName: '', passport: '', email: '' });
+    while (arr.length > value) arr.pop();
+    return arr;
+  });
+};
+
 
   // Handle passenger field change
   const handlePassengerChange = (idx, field, value) => {
@@ -87,28 +103,34 @@ function App() {
       return arr
     })
   }
+const handleOrder = async () => {
+  if (!selectedFlight || passengers.length === 0) return;
 
-  // Add this function for the order button
-  const handleOrder = async () => {
-    if (!selectedFlight) return;
-    setOrderLoading(true);
-    // Example POST body
-    const orderData = {
-      flightId: selectedFlight.id,
-      numSeats,
-      passengers,
-    };
-    try {
-      // Replace '/api/order' with your actual endpoint
-      await axios.post('/api/order', orderData);
-      alert('Order placed successfully!');
-      closeModal();
-    } catch (err) {
-      alert('Failed to place order.');
-    } finally {
-      setOrderLoading(false);
+  setOrderLoading(true);
+
+  try {
+    for (const p of passengers) {
+      const booking = {
+        flight_id: selectedFlight.id,
+        passenger_name: p.fullName,
+        passenger_email: p.email,
+        passenger_id: p.passport,
+        total_price: selectedFlight.price * numSeats
+      };
+
+      await axios.post(import.meta.env.VITE_URL + '/bookings', booking);
+
     }
-  };
+
+    alert('Order placed successfully!');
+    closeModal();
+  } catch (err) {
+    console.error('❌ Booking error:', err);
+    alert('Failed to place order.');
+  } finally {
+    setOrderLoading(false);
+  }
+};
 
   return (
     <div className="app-container">
@@ -140,6 +162,7 @@ function App() {
         </div>
       </div>
       <h1 className="main-title">✈️ Quick Flight's</h1>
+      
       <div className="filter-bar">
         <input
           type="text"
@@ -171,7 +194,86 @@ function App() {
           value={dateFilter}
           onChange={e => setDateFilter(e.target.value)}
         />
+        <button
+  className="my-flights-btn"
+  onClick={() => {
+    setMyFlightsOpen(true);
+    setFlightNumberQuery('');
+    setPassportQuery('');
+    setMyFlightResult(null);
+    setMyFlightError('');
+  }}
+>
+  My Flights
+</button>
+
+        <button className="reset-filters-btn" onClick={() => {
+          setDepartureFilter('')
+          setDestinationFilter('')
+          setAirlineFilter('')
+          setPriceFilter('')
+          setDateFilter('')
+        }}>Reset Filters</button>
       </div>
+      {myFlightsOpen && (
+  <div className="modal-overlay" onClick={() => setMyFlightsOpen(false)}>
+    <div className="reservation-modal" onClick={e => e.stopPropagation()}>
+      <button className="modal-close" onClick={() => setMyFlightsOpen(false)}>&times;</button>
+      <h2>🔎 מצא את ההזמנה שלך</h2>
+      <input
+        type="text"
+        placeholder="Flight Number"
+        value={flightNumberQuery}
+        onChange={e => setFlightNumberQuery(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Passport Number"
+        value={passportQuery}
+        onChange={e => setPassportQuery(e.target.value)}
+      />
+      <button
+        className="order-btn"
+        onClick={async () => {
+          try {
+            const res = await axios.get(import.meta.env.VITE_URL + '/books');
+
+            const match = res.data.find(
+              b => b.passenger_id === passportQuery && b.flight_number === flightNumberQuery
+            );
+            if (match) {
+              setMyFlightResult(match);
+              setMyFlightError('');
+            } else {
+              setMyFlightResult(null);
+              setMyFlightError('❌ No matching booking found.');
+            }
+          } catch (err) {
+            console.error(err);
+            setMyFlightError('❌ Error fetching bookings.');
+          }
+        }}
+      >
+        Search
+      </button>
+
+      {myFlightError && <p style={{ color: 'red' }}>{myFlightError}</p>}
+
+      {myFlightResult && (
+        <div className="modal-flight-info">
+          <h4>✈️ Flight #{myFlightResult.flight_number}</h4>
+          <p><strong>From:</strong> {myFlightResult.origin}</p>
+          <p><strong>To:</strong> {myFlightResult.destination}</p>
+          <p><strong>Departure:</strong> {new Date(myFlightResult.departure_time).toLocaleString()}</p>
+          <p><strong>Passenger:</strong> {myFlightResult.passenger_name} ({myFlightResult.passenger_id})</p>
+          <p><strong>Email:</strong> {myFlightResult.passenger_email}</p>
+          <p><strong>Total Paid:</strong> ${myFlightResult.total_price}</p>
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
       {loading ? (
         <div className="loader-container">
           <div className="loader"></div>
@@ -185,14 +287,17 @@ function App() {
         </div>
       ) : (
         <div className="flights-list">
-          {filteredFlights.map((flight, idx) => (
-            <div
-              className="flight-card"
-              key={flight.id || idx}
-              onClick={() => handleCardClick(flight)}
-              tabIndex={0}
-              style={{ cursor: 'pointer' }}
-            >
+         {[...filteredFlights]
+  .sort((a, b) => new Date(a.departureTime) - new Date(b.departureTime))
+  .map((flight, idx) => (
+
+    <div
+      className="flight-card"
+      key={flight.id || idx}
+      onClick={() => handleCardClick(flight)}
+      tabIndex={0}
+      style={{ cursor: 'pointer' }}
+    >
               <div className="flight-header">
                 <span className="flight-route">{flight.origin} → {flight.destination}</span>
                 <span className="flight-price">${flight.price}</span>
@@ -202,14 +307,17 @@ function App() {
               </span>
               <div className="flight-details">
                 <span>
-                  Departure: {new Date(flight.departureTime).toLocaleString(undefined, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                 Departure: {new Date(flight.departureTime).toLocaleString('en-GB', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+})}
+
                 </span>
+                
                 <span>
                   Arrival: {new Date(flight.arrivalTime).toLocaleString(undefined, {
                     year: 'numeric',
@@ -220,6 +328,8 @@ function App() {
                   })}
                 </span>
                 <span>Airline: {flight.airline}</span>
+                <span>Seats left: {flight.available_seats}</span>
+
               </div>
             </div>
           ))}

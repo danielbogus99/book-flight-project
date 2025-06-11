@@ -17,8 +17,9 @@ app.get('/flights', FlightController.ctrlGetFlights);
 //app.post('/createflight', FlightController.ctrlCreateFlight);
 
 // books.
-//app.get('/books', BooksController.ctrlGetBooks);
-app.post('/books', BooksController.ctrlCreateBook);
+app.get('/books', BooksController.ctrlGetBooks);
+app.post('/bookings', BooksController.ctrlCreateBook);
+
 
 
 app.listen(port, () => {
