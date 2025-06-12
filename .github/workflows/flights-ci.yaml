@@ -12,6 +12,7 @@ jobs:
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PORT: ${{ secrets.PORT }}
 
     steps:
       - name: Checkout repository
