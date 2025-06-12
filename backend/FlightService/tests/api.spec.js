@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-// If you want to use the app directly, use: import app from '../src/index.js';
 
 chai.use(chaiHttp);
 const expect = chai.expect;
