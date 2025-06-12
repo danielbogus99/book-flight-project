@@ -13,7 +13,7 @@ export const getFlights = async () => {
             airline: row.flight_company,
             flightNumber: row.flight_number,
             price: parseFloat(row.price),
-            availableSeats: row.available_seats
+        available_seats: row.available_seats
         }));
     } catch (error) {
         console.error('Error fetching flights:', error);

@@ -497,3 +497,19 @@ body {
     grid-template-columns: 1fr;
   }
 }
+.my-flights-btn {
+  background-color: #e53935; /* אדום */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px auto;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.my-flights-btn:hover {
+  background-color: #c62828;
+}
