@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-start:
+  build-and-test:
     runs-on: ubuntu-latest
 
     env:
@@ -25,6 +25,14 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: backend/FlightService
+
+      - name: Start server in background
+        run: npm start &
+        working-directory: backend/FlightService
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:12877/flights
         working-directory: backend/FlightService
 
       - name: Run Test
