@@ -27,6 +27,7 @@ const [myFlightError, setMyFlightError] = useState('');
 
  const filteredFlights = flights
   .filter(flight => !!flight.departureTime)
+  .filter(flight => flight.available_seats > 0)
   .filter(flight => {
     const matchesDeparture = flight.origin.toLowerCase().includes(departureFilter.toLowerCase());
     const matchesDestination = flight.destination.toLowerCase().includes(destinationFilter.toLowerCase());
@@ -111,7 +112,7 @@ const handleOrder = async () => {
   try {
     for (const p of passengers) {
       const booking = {
-        flight_id: selectedFlight.id,
+        flight_number: selectedFlight.flightNumber,
         passenger_name: p.fullName,
         passenger_email: p.email,
         passenger_id: p.passport,
@@ -119,14 +120,21 @@ const handleOrder = async () => {
       };
 
       await axios.post(import.meta.env.VITE_URL + '/bookings', booking);
-
     }
 
     alert('Order placed successfully!');
     closeModal();
+
+    // Fetch flights again to update the UI
+    const response = await axios.get(import.meta.env.VITE_URL + '/flights');
+    setFlights(response.data);
+
   } catch (err) {
-    console.error('❌ Booking error:', err);
-    alert('Failed to place order.');
+    if (err.response && err.response.data && err.response.data.error) {
+      alert(err.response.data.error); // Show the error from backend
+    } else {
+      alert('Failed to place order.');
+    }
   } finally {
     setOrderLoading(false);
   }
@@ -219,43 +227,45 @@ const handleOrder = async () => {
   <div className="modal-overlay" onClick={() => setMyFlightsOpen(false)}>
     <div className="reservation-modal" onClick={e => e.stopPropagation()}>
       <button className="modal-close" onClick={() => setMyFlightsOpen(false)}>&times;</button>
-      <h2>🔎 מצא את ההזמנה שלך</h2>
+      <h2>🔎 Find My Flights</h2>
       <input
-        type="text"
-        placeholder="Flight Number"
-        value={flightNumberQuery}
-        onChange={e => setFlightNumberQuery(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Passport Number"
-        value={passportQuery}
-        onChange={e => setPassportQuery(e.target.value)}
-      />
-      <button
-        className="order-btn"
-        onClick={async () => {
-          try {
-            const res = await axios.get(import.meta.env.VITE_URL + '/books');
+  type="text"
+  className="modal-input"
+  placeholder="Flight Number"
+  value={flightNumberQuery}
+  onChange={e => setFlightNumberQuery(e.target.value)}
+/>
+<input
+  type="text"
+  className="modal-input"
+  placeholder="Passport Number"
+  value={passportQuery}
+  onChange={e => setPassportQuery(e.target.value)}
+/>
+<button
+  className="order-btn modal-search-btn"
+  onClick={async () => {
+    try {
+      const res = await axios.get(import.meta.env.VITE_URL + '/books');
 
-            const match = res.data.find(
-              b => b.passenger_id === passportQuery && b.flight_number === flightNumberQuery
-            );
-            if (match) {
-              setMyFlightResult(match);
-              setMyFlightError('');
-            } else {
-              setMyFlightResult(null);
-              setMyFlightError('❌ No matching booking found.');
-            }
-          } catch (err) {
-            console.error(err);
-            setMyFlightError('❌ Error fetching bookings.');
-          }
-        }}
-      >
-        Search
-      </button>
+      const match = res.data.find(
+        b => b.passenger_id === passportQuery && b.flight_number === flightNumberQuery
+      );
+      if (match) {
+        setMyFlightResult(match);
+        setMyFlightError('');
+      } else {
+        setMyFlightResult(null);
+        setMyFlightError('❌ No matching booking found.');
+      }
+    } catch (err) {
+      console.error(err);
+      setMyFlightError('❌ Error fetching bookings.');
+    }
+  }}
+>
+  Search
+</button>
 
       {myFlightError && <p style={{ color: 'red' }}>{myFlightError}</p>}
 

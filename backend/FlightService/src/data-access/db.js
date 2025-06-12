@@ -23,32 +23,35 @@ pool.connect()
 
         const flightTable = `
             CREATE TABLE IF NOT EXISTS flights (
-                id SERIAL PRIMARY KEY,
-                origin TEXT NOT NULL,
-                destination TEXT NOT NULL,
-                departure_time TIMESTAMP NOT NULL,
-                arrival_time TIMESTAMP NOT NULL,
-                flight_company TEXT NOT NULL,
-                flight_number TEXT NOT NULL,
-                price DECIMAL(10, 2) NOT NULL,
-                available_seats INTEGER NOT NULL
-            );
+              id SERIAL PRIMARY KEY,
+              origin TEXT NOT NULL,
+              destination TEXT NOT NULL,
+              departure_time TIMESTAMP NOT NULL,
+              arrival_time TIMESTAMP NOT NULL,
+              flight_company TEXT NOT NULL,
+              flight_number TEXT NOT NULL UNIQUE,
+              price DECIMAL(10, 2) NOT NULL,
+              available_seats INTEGER NOT NULL
+          );
         `;
 
         const bookingTable = `
             CREATE TABLE IF NOT EXISTS bookings (
-                id SERIAL PRIMARY KEY,
-                flight_id INTEGER NOT NULL REFERENCES flights(id),
-                passenger_name TEXT NOT NULL,
-                passenger_email TEXT NOT NULL,
-                passenger_id TEXT NOT NULL,
-                total_price DECIMAL(10, 2) NOT NULL
-            );
+              id SERIAL PRIMARY KEY,
+              flight_number TEXT NOT NULL REFERENCES flights(flight_number),
+              passenger_name TEXT NOT NULL,
+              passenger_email TEXT NOT NULL,
+              passenger_id TEXT NOT NULL,
+              total_price DECIMAL(10, 2) NOT NULL
+          );
         `;
 
 
         await client.query(flightTable);
         await client.query(bookingTable);
+        //await client.query('DROP TABLE bookings');
+        //await client.query('DROP TABLE flights');
+        
 
         client.release();
         console.log('✅ Flights table initialized');

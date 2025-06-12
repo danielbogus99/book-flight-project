@@ -1,7 +1,7 @@
 import db from '../data-access/db.js';
 
 export const BookFlight = async ({
-    flight_id,
+    flight_number,
     passenger_name,
     passenger_email,
     passenger_id,
@@ -9,11 +9,11 @@ export const BookFlight = async ({
 }) => {
     try {
         const insertQuery = `
-            INSERT INTO bookings (flight_id, passenger_name, passenger_email, passenger_id, total_price)
+            INSERT INTO bookings (flight_number, passenger_name, passenger_email, passenger_id, total_price)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *;
         `;
-        const values = [flight_id, passenger_name, passenger_email, passenger_id, total_price];
+        const values = [flight_number, passenger_name, passenger_email, passenger_id, total_price];
         const result = await db.query(insertQuery, values);
         return result.rows[0];
     } catch (error) {
