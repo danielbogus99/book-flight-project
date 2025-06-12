@@ -25,3 +25,5 @@ app.post('/bookings', BooksController.ctrlCreateBook);
 app.listen(port, () => {
     console.log(`Flight Service is running on port ${port}`);
 });
+
+export { app };

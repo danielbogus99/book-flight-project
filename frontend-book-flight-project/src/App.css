@@ -338,7 +338,10 @@ body {
   position: relative;
   animation: fadeInDown 0.4s;
   overflow-x: hidden;
-  /* Add this */
+  max-height: 90vh;
+  overflow-y: auto;
+  /* Optional: prevent horizontal scroll */
+  overflow-x: hidden;
 }
 
 .modal-close {
