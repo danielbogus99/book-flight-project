@@ -21,6 +21,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: backend/FlightService
 
       - name: Start application
         run: npm start
+        working-directory: backend/FlightService
