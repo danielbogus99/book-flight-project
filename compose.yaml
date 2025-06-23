@@ -1,4 +1,18 @@
 services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dbbookflight
+      POSTGRES_USER: dbbookflight_user
+      POSTGRES_PASSWORD: RjAfoKWWt0Zk7jG4atM9EdYfdvJiVuRy
+    ports:
+      - "5432:5432"
+    networks:
+      - app-net
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
   js-flightservice:
     build:
       context: ./backend/FlightService
@@ -11,6 +25,8 @@ services:
       - "12877:12877"
     networks:
       - app-net
+    depends_on:
+      - db
 
   js-frontend-book-flight-project:
     build:
@@ -30,3 +46,6 @@ services:
 networks:
   app-net:
     driver: bridge
+
+volumes:
+  db_data:
