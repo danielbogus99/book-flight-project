@@ -1,0 +1,65 @@
+# Node.js dependencies
+node_modules/
+
+# Test and coverage outputs
+test/
+tests/
+*.spec.js
+*.test.js
+coverage/
+
+# Build outputs
+dist/
+build/
+out/
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Version control
+.git/
+.gitignore
+.hg/
+.svn/
+
+# Environment and secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.crt
+
+# Local configuration and development
+.local/
+local/
+config.local.*
+*.local.yml
+
+# Documentation and markdown
+README*
+*.md
+docs/
+
+# Temporary files and folders
+tmp/
+temp/
+*.tmp
+
+# Debug and log files
+*.log
+debug/
+
+# Docker and compose files
+Dockerfile*
+docker-compose*
+
+# Project-specific: skip YAML workflows (CI/CD)
+.github/
+
+# Exclude asset and public folders only if not needed in build (uncomment if so)
+# public/
+# assets/

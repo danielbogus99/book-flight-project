@@ -7,8 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  build-and-start:
+  build-and-test:
     runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PORT: ${{ secrets.PORT }}
 
     steps:
       - name: Checkout repository
@@ -21,6 +25,16 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: backend/FlightService
 
-      - name: Start application
-        run: npm start
+      - name: Start server in background
+        run: npm start &
+        working-directory: backend/FlightService
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:12877/flights
+        working-directory: backend/FlightService
+
+      - name: Run Test
+        run: npm test
+        working-directory: backend/FlightService
