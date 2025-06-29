@@ -1,0 +1,12 @@
+{
+  "name": "book-flight-project",
+  "version": "1.0.0",
+  "scripts": {
+    "install-all": "cd backend/FlightService && npm install && cd ../../frontend-book-flight-project && npm install",
+    "start-all": "concurrently \"cd backend/FlightService && node src\" \"cd frontend-book-flight-project && npm run dev\"",
+    "dev": "npm run install-all && npm run start-all"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
